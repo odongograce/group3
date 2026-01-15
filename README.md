@@ -1,95 +1,48 @@
-**EcoFinds**
+```md
+# Phase 4 Project: EcoFinds (Updated)
 
-EcoFinds is a web application that allows users to list second-hand items for auction. Buyers compete by placing bids, and the system automatically tracks the highest offers. Each new bid must exceed the current highest bid, while administrators oversee auctions to finalize sales to the highest bidder.
+In this project, you'll be working with an online second-hand auction marketplace.
 
-EcoFinds provides a transparent and dynamic marketplace for second-hand items.
+In this repo:
 
-**Features**
+- There is a Flask application with core auction features built out.
+- There is a fully built React frontend application.
+- Users can register as buyers or sellers.
+- Sellers can create auction listings with starting prices and minimum bid increments.
+- Buyers can place bids that must be higher than the current highest bid.
+- Admins can oversee and finalize auctions.
+- The system automatically tracks and updates the highest bid in real time.
 
-User Accounts: Buyers and sellers can register and log in.
+Depending on your preference, you can check your application by:
 
-Auction Listings: Sellers can create listings with a starting price and minimum increment.
+- Running the Flask API and testing endpoints manually
+- Running the React application in the browser and interacting with the API via the UI
 
-Bidding System: Buyers place bids higher than the current highest bid.
+## Features 
 
-Admin Controls: Administrators finalize auctions and ensure fairness.
+1. **User Accounts**: Buyers and sellers can register and log in.  
+2. **Auction Listings**: Sellers can create listings with starting prices and minimum increments.  
+3. **Bidding System**: Buyers place bids higher than the current highest bid.  
+4. **Admin Controls**: Administrators finalize auctions and ensure fairness.  
+5. **Real-time Tracking**: The highest bid for each item is automatically updated.  
 
-Real-time Tracking: The highest bid for each item is automatically updated.
+## Usage
 
+1. **Create an account**: Sign up as a buyer or seller.  
+2. **List items**: Sellers post items for auction with starting prices and minimum increments.  
+3. **Place bids**: Buyers submit bids above the current highest bid.  
+4. **Finalize auctions**: Admins end auctions and confirm the highest bidder as the winner.  
 
-**Technology Stack**
+## Technology Stack
 
-**Frontend**: React.js
+- **Frontend:** React.js  
+- **Backend:** Flask API  
+- **Database:** SQLAlchemy (SQLite)  
+- **Other:** HTML, CSS, JavaScript  
 
-**Backend**: Flask API
+## Folder Structure
 
-**Database**: SQLAlchemy SQLite
-
-**Other**: HTML, CSS, JavaScript
-
-**Setup & Running the Project**
-**Backend**
-
-1. Navigate to the server folder:
-
-cd server
-
-
-2. Create a virtual environment and install dependencies:
-
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-
-3. Install the required packages manually:
-
-pip install flask
-pip install flask_sqlalchemy
-pip install flask_cors
-
-
-4. Seed the database with initial data (optional):
-
-python seed.py
-
-
-5. Start the Flask API:
-
-python app.py
-
-
-The backend runs on http://localhost:5000 by default.
-
-**Frontend**
-
-1. Navigate to the client folder:
-
-cd client
-
-
-2. Install dependencies:
-
-npm install
-
-
-3. Start the React app:
-
-npm start
-
-
-The frontend runs on http://localhost:3000 by default.
-
-**Usage**
-
-**Create an account**: Sign up as a buyer or seller.
-
-**List items**: Sellers can post items for auction with starting prices and minimum increments.
-
-**Place bids**: Buyers submit bids above the current highest bid.
-
-**Finalize auctions**: Admins can end auctions and confirm the highest bidder as the winner.
-
-**Folder Structure**
+```txt
 ecoFinds/
 │
 ├── server/       # Flask backend
@@ -104,6 +57,46 @@ ecoFinds/
 │
 └── README.md
 
-**Contributing**
 
-Contributions are welcome! Fork the repository, create a branch for your feature or bug fix, and submit a pull request.
+## Setup
+
+The instructions assume you changed into the project folder **prior**
+to opening the code editor.
+
+### Backend Setup
+
+To create and activate the virtual environment named `env` and install dependencies, run:
+
+```console
+cd server
+python3 -m venv env
+source env/bin/activate   # On Windows: env\Scripts\activate
+pip install flask flask_sqlalchemy flask_cors
+```
+
+To seed database with initial data, run:
+
+```console
+python seed.py
+```
+
+You can run your Flask API on http://localhost:5555 by running:
+
+```console
+python app.py
+```
+
+### Frontend Setup
+
+To install frontend dependencies, run:
+
+```console
+cd client
+npm install
+```
+
+You can run your react app on http://localhost:3000 by running:
+
+```sh
+npm start
+``
