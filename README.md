@@ -1,9 +1,10 @@
 ```md
-# Phase 4 Project: EcoFinds (Updated)
+
+# ecoFinds
 
 In this project, you'll be working with an online second-hand auction marketplace.
 
-In this repo:
+## In this repo:
 
 - There is a Flask application with core auction features built out.
 - There is a fully built React frontend application.
@@ -40,28 +41,9 @@ Depending on your preference, you can check your application by:
 - **Database:** SQLAlchemy (SQLite)  
 - **Other:** HTML, CSS, JavaScript  
 
-## Folder Structure
-
-```txt
-ecoFinds/
-│
-├── server/       # Flask backend
-│   ├── app.py
-│   ├── models.py
-│   └── seed.py
-│
-├── client/       # React frontend
-│   ├── src/
-│   ├── public/
-│   └── package.json
-│
-└── README.md
-
-
 ## Setup
 
-The instructions assume you changed into the project folder **prior**
-to opening the code editor.
+The instructions assume you changed into the project folder **prior** to opening the code editor.
 
 ### Backend Setup
 
@@ -100,3 +82,20 @@ You can run your react app on http://localhost:3000 by running:
 ```sh
 npm start
 ``
+
+## Folder Structure
+
+```txt
+ecoFinds/
+│
+├── server/       # Flask backend
+│   ├── app.py
+│   ├── models.py
+│   └── seed.py
+│
+├── client/       # React frontend
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+└── README.md
