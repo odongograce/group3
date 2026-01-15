@@ -24,6 +24,9 @@ def seed_database():
             User(name="Sarah Johnson", email="sarah@example.com", password="password123", role="seller"),
             User(name="Mike Chen", email="mike@example.com", password="password123", role="seller"),
             User(name="Emily Brown", email="emily@example.com", password="password123", role="seller"),
+            User(name="Carol White", email="cwhite@example.com", password="password123", role="seller"),
+            User(name="Kevin Omondi", email="kevin@example.com", password="password123", role="seller"),
+            User(name="Mark  Kamau", email="markkamau@example.com", password="password123", role="seller"),
         ]
         
         # Buyers
@@ -32,7 +35,8 @@ def seed_database():
             User(name="Jane Smith", email="jane@example.com", password="password123", role="buyer"),
             User(name="Bob Wilson", email="bob@example.com", password="password123", role="buyer"),
             User(name="Esther Wambui", email="bobo@example.com", password="password123", role="buyer"),
-            User(name="George Erickson", email="erickson@example.com", password="passowrd123", role="buyer")
+            User(name="George Erickson", email="erickson@example.com", password="passowrd123", role="buyer"),
+            User(name="Ethan Ruto", email="ruto@example.com", password="password123", role="buyer"),
         ]
         
         db.session.add(admin)
@@ -108,10 +112,9 @@ def seed_database():
         db.session.commit()
         
         print("Creating bids...")
-        # Create some bids for approved auctions
         approved_auctions = [a for a in auctions if a.status == "approved"]
         
-        for auction in approved_auctions[:3]:  # Add bids to first 3 approved auctions
+        for auction in approved_auctions[:3]: 
             num_bids = randint(2, 5)
             current_price = auction.starting_price
             
