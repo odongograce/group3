@@ -13,7 +13,6 @@ export default function ContactPage() {
       <main className="pt-24 pb-12 px-4">
         <div className="container mx-auto max-w-5xl space-y-12">
           
-          {/* Header Section */}
           <div className="text-center space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold">Customer Support</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -22,7 +21,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          {/* Contact Channels */}
+          
           <div className="grid md:grid-cols-3 gap-6">
             <Card className="text-center hover:border-primary transition-all">
               <CardHeader className="space-y-1">
@@ -34,7 +33,7 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <a href="mailto:support@ecofind.com" className="text-primary font-bold hover:underline">
-                  support@ecofind.com
+                  support@ecofinds.com
                 </a>
               </CardContent>
             </Card>
@@ -45,7 +44,7 @@ export default function ContactPage() {
                   <Phone className="h-6 w-6 text-accent" />
                 </div>
                 <CardTitle>Phone & WhatsApp</CardTitle>
-                <CardDescription>Mon-Fri, 8am - 6pm</CardDescription>
+                <CardDescription>Mon-Sun, 8am - 6pm</CardDescription>
               </CardHeader>
               <CardContent>
                 <a href="tel:+254740984673" className="text-accent font-bold hover:underline">
@@ -68,7 +67,7 @@ export default function ContactPage() {
             </Card>
           </div>
 
-          {/* Shop Policy / FAQ Quick Links */}
+          
           <div className="bg-muted/50 rounded-2xl p-8 border">
             <h2 className="text-2xl font-bold mb-8 text-center">Helpful Resources</h2>
             <div className="grid sm:grid-cols-3 gap-8">
@@ -92,7 +91,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Footer Note */}
+          
           <div className="text-center border-t pt-8">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
