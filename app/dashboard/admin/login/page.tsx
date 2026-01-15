@@ -10,13 +10,16 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/contexts/auth-context"
 import { ArrowLeft } from "lucide-react"
+import AdminClient from "../AdminClient"
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
   const router = useRouter()
+  
   const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,22 +29,16 @@ export default function LoginPage() {
 
     const result = await login(email, password)
 
-    // if (result.success && result.user) {
-    //   const role = result.user.role
-    //   if (role === "admin") router.push("/admin")
-    //   else router.push("/dashboard")
-    // } else {
-    //   setError(result.error || "Login failed")
-    // }
-
     if (result.success && result.user) {
-    if (result.user.role === "admin") {
-    router.push("/dashboard/admin")
-  } else {
-    router.push("/dashboard")
-  }
-}
-
+      if (result.user.role !== "admin") {
+        setError("Admin credentials required.")
+      } else {
+        // ✅ your route is under /dashboard/admin
+        router.push("/dashboard/admin")
+      }
+    } else {
+      setError(result.error || "Login failed")
+    }
 
     setLoading(false)
   }
@@ -56,15 +53,15 @@ export default function LoginPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Welcome Back</h1>
-            <p className="text-sm text-muted-foreground">Login to your ecoFinds account</p>
+            <h1 className="text-2xl font-bold">Admin Login</h1>
+            <p className="text-sm text-muted-foreground">Admins can login only</p>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Login</CardTitle>
-            <CardDescription>Enter your credentials to access your account</CardDescription>
+            <CardTitle>Admin</CardTitle>
+            <CardDescription>Enter admin credentials</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,7 +70,6 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="youemail@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -85,7 +81,6 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -95,26 +90,12 @@ export default function LoginPage() {
               {error && <p className="text-sm text-destructive">{error}</p>}
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
+                {loading ? "Logging in..." : "Login as Admin"}
               </Button>
             </form>
-
-            <div className="mt-4 text-center text-sm">
-              <span className="text-muted-foreground">Don't have an account? </span>
-              <Link href="/signup" className="text-primary hover:underline font-medium">
-                Sign up
-              </Link>
-            </div>
-
-            <div className="mt-4 text-center text-sm">
-             <span className="text-muted-foreground">Admin? </span>
-              <Link href="/dashboard/admin/login" className="text-primary hover:underline font-medium">
-                Admin login
-              </Link>
-            </div>
-
           </CardContent>
         </Card>
+        <AdminClient />
       </div>
     </div>
   )

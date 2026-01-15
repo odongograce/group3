@@ -1,4 +1,5 @@
 from app import app
+from config import db
 from models import db, User, Auction, Bid
 from datetime import datetime, timedelta
 from random import choice, uniform, randint
@@ -13,26 +14,32 @@ def seed_database():
         print("Creating users...")
         # Admin
         admin = User(
-            name="Admin User",
+            username="Admin Freddy",
             email="admin@ecofind.com",
-            password="admin123",
             role="admin"
         )
-        
+        admin.set_password("admin123")
+
+
         # Sellers
         sellers = [
-            User(name="Sarah Johnson", email="sarah@example.com", password="password123", role="seller"),
-            User(name="Mike Chen", email="mike@example.com", password="password123", role="seller"),
-            User(name="Emily Brown", email="emily@example.com", password="password123", role="seller"),
+            User(username="Sarah Johnson", email="sarah@gmail.com", role="seller"),
+            User(username="Mike Chen", email="mike@hotmail.com",role="seller"),
+            User(username="Emily Brown", email="emily@yahoo.com", role="seller"),
         ]
+        for s in sellers:
+            s.set_password("password123")
         
         # Buyers
         buyers = [
-            User(name="John Doe", email="john@example.com", password="password123", role="buyer"),
-            User(name="Jane Smith", email="jane@example.com", password="password123", role="buyer"),
-            User(name="Bob Wilson", email="bob@example.com", password="password123", role="buyer"),
+            User(username="John Doe", email="john@gmail.com", role="buyer"),
+            User(username="Jane Smith", email="jane@icloud.com", role="buyer"),
+            User(username="Bob Wilson", email="bob@yahoo.com",role="buyer"),
         ]
-        
+        for b in buyers:
+            b.set_password("password123")
+
+
         db.session.add(admin)
         db.session.add_all(sellers)
         db.session.add_all(buyers)
@@ -49,7 +56,7 @@ def seed_database():
                 "condition": "good",
                 "starting_price": 50.0,
                 "category": "Electronics",
-                "image_url": "/vintage-camera.png"
+                "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPbrJOqoY1C3piZuAR7u-P46NLkD3aRzNDlQ&s"
             },
             {
                 "title": "Luxury Watch",
@@ -57,7 +64,7 @@ def seed_database():
                 "condition": "like new",
                 "starting_price": 200.0,
                 "category": "Electronics",
-                "image_url": "/luxury-watch.jpg"
+                "image_url": "https://media.fashionnetwork.com/cdn-cgi/image/format=auto/m/06e4/0f65/5c91/8359/0a6e/d7df/f5a4/15e3/73a5/7505/7505.jpeg"
             },
             {
                 "title": "Wooden Desk",
@@ -65,7 +72,7 @@ def seed_database():
                 "condition": "good",
                 "starting_price": 100.0,
                 "category": "Furniture",
-                "image_url": "/placeholder.svg?height=200&width=200"
+                "image_url": "https://wwmake.com/cdn/shop/files/MacieDeskWalnutClear_800x.jpg?v=1689075504"
             },
             {
                 "title": "Designer Jacket",
@@ -73,7 +80,7 @@ def seed_database():
                 "condition": "like new",
                 "starting_price": 80.0,
                 "category": "Clothing",
-                "image_url": "/placeholder.svg?height=200&width=200"
+                "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5G1nIB7ATFA4A75g76gIXzDe6nXwlHkch2Q&s"
             },
             {
                 "title": "Mountain Bike",
@@ -81,7 +88,7 @@ def seed_database():
                 "condition": "good",
                 "starting_price": 150.0,
                 "category": "Sports",
-                "image_url": "/placeholder.svg?height=200&width=200"
+                "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLXbbQtak0TeijaorHedEs7yQvL5xuXVdnVw&s"
             },
         ]
         
@@ -92,7 +99,6 @@ def seed_database():
                 description=auction_data["description"],
                 condition=auction_data["condition"],
                 starting_price=auction_data["starting_price"],
-                minimum_increment=5.0,
                 current_price=auction_data["starting_price"],
                 end_date=datetime.utcnow() + timedelta(days=randint(3, 14)),
                 status=choice(["pending", "approved", "approved"]), 
@@ -116,11 +122,11 @@ def seed_database():
             for _ in range(num_bids):
                 bid_amount = current_price + auction.minimum_increment + uniform(0, 20)
                 bid = Bid(
-                    bid_amount=round(bid_amount, 2),
+                    bid_amount=bid_amount,
                     user_id=choice(buyers).id,
                     auction_id=auction.id
                 )
-                auction.current_price = round(bid_amount, 2)
+                auction.current_price = bid_amount
                 current_price = bid_amount
                 db.session.add(bid)
         

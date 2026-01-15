@@ -27,6 +27,7 @@ export default function ProductDetailPage() {
   const [bidAmount, setBidAmount] = useState("")
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -64,30 +65,35 @@ export default function ProductDetailPage() {
   const hoursLeft = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
 
-  const handlePlaceBid = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setSuccess(false)
+  const handlePlaceBid = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setError("")
+  setSuccess(false)
 
-    const amount = Number.parseFloat(bidAmount)
+  const amount = Math.floor(Number(bidAmount))
 
-    if (amount <= product.currentPrice) {
-      setError(`Bid must be higher than current price of $${product.currentPrice}`)
-      return
-    }
-
-    const bidPlaced = placeBid(productId, user.id, user.username, user.email, amount)
-
-    if (bidPlaced) {
-      setSuccess(true)
-      setBidAmount("")
-      setTimeout(() => setSuccess(false), 3000)
-    } else {
-      setError("Failed to place bid. Please try again.")
-    }
+  if (!Number.isFinite(amount) || amount <= 0) {
+    setError("Enter a valid bid amount.")
+    return
   }
 
-  const canBid = user.role === "buyer" && product.status === "active"
+  if (amount <= product.currentPrice) {
+    setError(`Bid must be higher than current price of $${product.currentPrice}`)
+    return
+  }
+
+  const result = await placeBid(productId, amount)
+
+  if (result.success) {
+    setSuccess(true)
+    setBidAmount("")
+    setTimeout(() => setSuccess(false), 3000)
+  } else {
+    setError(result.error || "Failed to place bid. Please try again.")
+  }
+}
+
+const canBid = user.role === "buyer" && product.status === "active"
 
   return (
     <div className="min-h-screen bg-background">
@@ -114,12 +120,10 @@ export default function ProductDetailPage() {
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
-                  <Badge
-                    className="absolute top-4 left-4"
-                    variant={product.status === "active" ? "default" : "secondary"}
-                  >
+                  <Badge className="absolute top-4 left-4" variant={product.status === "active" ? "default" : "secondary"}>
                     {product.status}
                   </Badge>
+
                   {user.role !== "admin" && (
                     <Button
                       size="icon"
@@ -178,9 +182,7 @@ export default function ProductDetailPage() {
                   <p className="text-sm text-muted-foreground mb-1">Current Highest Bid</p>
                   <div className="flex items-end gap-2">
                     <span className="text-4xl font-bold text-primary">${product.currentPrice}</span>
-                    {bids.length > 0 && (
-                      <span className="text-sm text-muted-foreground mb-2">({bids.length} bids)</span>
-                    )}
+                    {bids.length > 0 && <span className="text-sm text-muted-foreground mb-2">({bids.length} bids)</span>}
                   </div>
                 </div>
 
@@ -203,25 +205,24 @@ export default function ProductDetailPage() {
                             onChange={(e) => setBidAmount(e.target.value)}
                             required
                             min={product.currentPrice + 1}
-                            step="0.01"
+                            step="1"
+                            disabled={submitting}
                           />
                         </div>
 
                         {error && <p className="text-sm text-destructive">{error}</p>}
                         {success && <p className="text-sm text-green-600">Bid placed successfully!</p>}
 
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full" disabled={submitting}>
                           <TrendingUp className="mr-2 h-4 w-4" />
-                          Place Bid
+                          {submitting ? "Placing..." : "Place Bid"}
                         </Button>
                       </form>
                     </CardContent>
                   </Card>
                 ) : user.role === "admin" ? (
                   <Card>
-                    <CardContent className="py-6 text-center text-muted-foreground">
-                      Admins cannot place bids
-                    </CardContent>
+                    <CardContent className="py-6 text-center text-muted-foreground">Admins cannot place bids</CardContent>
                   </Card>
                 ) : user.role === "seller" ? (
                   <Card>
@@ -231,9 +232,7 @@ export default function ProductDetailPage() {
                   </Card>
                 ) : (
                   <Card>
-                    <CardContent className="py-6 text-center text-muted-foreground">
-                      This auction is no longer active
-                    </CardContent>
+                    <CardContent className="py-6 text-center text-muted-foreground">This auction is no longer active</CardContent>
                   </Card>
                 )}
               </div>

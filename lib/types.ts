@@ -1,35 +1,25 @@
-export type UserRole = "buyer" | "seller" | "admin"
+// export type ProductStatus = "pending" | "active" | "sold" | "closed"
 
-export interface User {
-  id: string
-  email: string
-  username: string
-  role: UserRole
-  createdAt: string
-}
-
-export interface Product {
+export type Product = {
   id: string
   name: string
   description: string
-  condition: "new" | "like-new" | "good" | "fair" | "poor"
+  condition: string
   startingPrice: number
   currentPrice: number
   category: string
   imageUrl: string
   sellerId: string
   sellerName: string
-  status: "pending" | "active" | "sold" | "rejected"
+  status: ProductStatus
   createdAt: string
   endDate: string
-  reviews: Review[]
-  winnerId?: string
-  winnerUsername?: string
+  reviews: any[]
 }
 
-export interface Bid {
+export type Bid = {
   id: string
-  productId: string
+  productId: string // maps to auction_id
   userId: string
   username: string
   email: string
@@ -37,16 +27,7 @@ export interface Bid {
   timestamp: string
 }
 
-export interface Review {
-  id: string
-  userId: string
-  username: string
-  rating: number
-  comment: string
-  timestamp: string
-}
-
-export interface CartItem {
+export type CartItem = {
   id: string
   productId: string
   userId: string
