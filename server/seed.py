@@ -31,6 +31,8 @@ def seed_database():
             User(name="John Doe", email="john@example.com", password="password123", role="buyer"),
             User(name="Jane Smith", email="jane@example.com", password="password123", role="buyer"),
             User(name="Bob Wilson", email="bob@example.com", password="password123", role="buyer"),
+            User(name="Esther Wambui", email="bobo@example.com", password="password123", role="buyer"),
+            User(name="George Erickson", email="erickson@example.com", password="passowrd123", role="buyer")
         ]
         
         db.session.add(admin)
