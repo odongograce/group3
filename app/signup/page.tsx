@@ -53,7 +53,7 @@ export default function SignupPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">Create Account</h1>
-            <p className="text-sm text-muted-foreground">Join ecoFind today</p>
+            <p className="text-sm text-muted-foreground">Join ecoFinds today</p>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export default function SignupPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="youemail@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
