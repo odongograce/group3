@@ -74,16 +74,30 @@ class Auctions(Resource):
         data = request.get_json()
 
         new_auction = Auction(
-            title=data.get('title'),
-            description=data.get('description'),
-            category=data.get('category'),
-            condition=data.get('condition'),
-            starting_price=float(data.get('starting_price')),
-            current_price=float(data.get('starting_price')),
-            end_date=datetime.fromisoformat(data.get('end_date')),
-            status="pending",
-            user_id=data.get('user_id')
-        )
+        title=data.get('title'),
+        description=data.get('description'),
+        category=data.get('category'),
+        condition=data.get('condition'),
+        starting_price=float(data.get('starting_price')),
+        current_price=float(data.get('starting_price')),
+        image_url=data.get('image_url'),
+        end_date=datetime.fromisoformat(data.get('end_date')),
+        status="pending",
+        user_id=data.get('user_id')
+)
+
+
+        # new_auction = Auction(
+        #     title=data.get('title'),
+        #     description=data.get('description'),
+        #     category=data.get('category'),
+        #     condition=data.get('condition'),
+        #     starting_price=float(data.get('starting_price')),
+        #     current_price=float(data.get('starting_price')),
+        #     end_date=datetime.fromisoformat(data.get('end_date')),
+        #     status="pending",
+        #     user_id=data.get('user_id')
+        # )
 
         db.session.add(new_auction)
         db.session.commit()
@@ -139,18 +153,36 @@ class Bids(Resource):
 
         return new_bid.to_dict(), 201
 
-
-
 class Login(Resource):
     def post(self):
         data = request.get_json()
 
         user = User.query.filter_by(email=data.get('email')).first()
+
         if not user or user.password != data.get('password'):
-            return {"error": "Invalid credentials"}, 401
+            return {
+                "success": False,
+                "error": "Invalid credentials"
+            }, 401
 
         session['user_id'] = user.id
-        return user.to_dict(), 200
+
+        return {
+            "success": True,
+            "user": user.to_dict()
+        }, 200
+
+
+# class Login(Resource):
+#     def post(self):
+#         data = request.get_json()
+
+#         user = User.query.filter_by(email=data.get('email')).first()
+#         if not user or user.password != data.get('password'):
+#             return {"error": "Invalid credentials"}, 401
+
+#         session['user_id'] = user.id
+#         return user.to_dict(), 200
 
 
 class Logout(Resource):
