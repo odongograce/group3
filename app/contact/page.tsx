@@ -1,152 +1,104 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React from "react"
 import { LandingNavbar } from "@/components/landing-navbar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, MapPin, Phone } from "lucide-react"
+import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Mail, Phone, Clock, MessageSquare, Truck, ShieldCheck, RefreshCcw } from "lucide-react"
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  })
-  const [submitted, setSubmitted] = useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // In a real app, this would send the data to a backend
-    console.log("[v0] Contact form submitted:", formData)
-    setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
-      setFormData({ name: "", email: "", subject: "", message: "" })
-    }, 3000)
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <LandingNavbar />
 
       <main className="pt-24 pb-12 px-4">
-        <div className="container mx-auto max-w-5xl space-y-8">
+        <div className="container mx-auto max-w-5xl space-y-12">
+          
           <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold">Contact Us</h1>
-            <p className="text-xl text-muted-foreground">
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            <h1 className="text-4xl md:text-5xl font-bold">Customer Support</h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Need help with an order? Our team is available to assist you with tracking, 
+              returns, and product inquiries.
             </p>
           </div>
 
+          
           <div className="grid md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+            <Card className="text-center hover:border-primary transition-all">
+              <CardHeader className="space-y-1">
+                <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
                   <Mail className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle>Email</CardTitle>
-                <CardDescription>support@ecofind.com</CardDescription>
+                <CardTitle>Email Support</CardTitle>
+                <CardDescription>Best for order inquiries</CardDescription>
               </CardHeader>
+              <CardContent>
+                <a href="mailto:support@ecofind.com" className="text-primary font-bold hover:underline">
+                  support@ecofinds.com
+                </a>
+              </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-2">
+            <Card className="text-center hover:border-accent transition-all">
+              <CardHeader className="space-y-1">
+                <div className="mx-auto w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mb-2">
                   <Phone className="h-6 w-6 text-accent" />
                 </div>
-                <CardTitle>Phone</CardTitle>
-                <CardDescription>+254 740 984 673</CardDescription>
+                <CardTitle>Phone & WhatsApp</CardTitle>
+                <CardDescription>Mon-Sun, 8am - 6pm</CardDescription>
               </CardHeader>
+              <CardContent>
+                <a href="tel:+254740984673" className="text-accent font-bold hover:underline">
+                  +254 740 984 673
+                </a>
+              </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
-                  <MapPin className="h-6 w-6 text-primary" />
+            <Card className="text-center hover:border-primary transition-all">
+              <CardHeader className="space-y-1">
+                <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
+                  <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle>Office</CardTitle>
-                <CardDescription>123 Live Street, Nairobi City</CardDescription>
+                <CardTitle>Live Chat</CardTitle>
+                <CardDescription>Available for quick help</CardDescription>
               </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground font-medium">Coming Soon</p>
+              </CardContent>
             </Card>
           </div>
 
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle>Send us a Message</CardTitle>
-              <CardDescription>Fill out the form below and we'll get back to you shortly</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {submitted ? (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Mail className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
-                  <p className="text-muted-foreground">We'll get back to you as soon as possible.</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="Your name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                    />
-                  </div>
+          
+          <div className="bg-muted/50 rounded-2xl p-8 border">
+            <h2 className="text-2xl font-bold mb-8 text-center">Helpful Resources</h2>
+            <div className="grid sm:grid-cols-3 gap-8">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <Truck className="h-8 w-8 text-muted-foreground" />
+                <h3 className="font-semibold">Shipping Info</h3>
+                <p className="text-sm text-muted-foreground">Track your package or view delivery times for Nairobi and beyond.</p>
+              </div>
+              
+              <div className="flex flex-col items-center text-center space-y-3">
+                <RefreshCcw className="h-8 w-8 text-muted-foreground" />
+                <h3 className="font-semibold">Returns & Refunds</h3>
+                <p className="text-sm text-muted-foreground">Not happy with your purchase? Start a return within 14 days.</p>
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
-                    />
-                  </div>
+              <div className="flex flex-col items-center text-center space-y-3">
+                <ShieldCheck className="h-8 w-8 text-muted-foreground" />
+                <h3 className="font-semibold">Secure Payment</h3>
+                <p className="text-sm text-muted-foreground">Learn about our M-Pesa and card payment encryption.</p>
+              </div>
+            </div>
+          </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject</Label>
-                    <Input
-                      id="subject"
-                      type="text"
-                      placeholder="What's this about?"
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message</Label>
-                    <Textarea
-                      id="message"
-                      placeholder="Your message..."
-                      rows={6}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full">
-                    Send Message
-                  </Button>
-                </form>
-              )}
-            </CardContent>
-          </Card>
+          
+          <div className="text-center border-t pt-8">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Average Response Time: 2 Hours</span>
+            </div>
+          </div>
+          
         </div>
       </main>
     </div>

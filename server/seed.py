@@ -101,7 +101,7 @@ def seed_database():
                 starting_price=auction_data["starting_price"],
                 current_price=auction_data["starting_price"],
                 end_date=datetime.utcnow() + timedelta(days=randint(3, 14)),
-                status=choice(["pending", "active", "active"]),  # More approved
+                status=choice(["pending", "approved", "approved"]), 
                 category=auction_data["category"],
                 image_url=auction_data["image_url"],
                 user_id=sellers[i % len(sellers)].id
