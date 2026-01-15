@@ -1,305 +1,163 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react"
 
-const API_URL = "http://127.0.0.1:5555/api"
+const API_URL = "http://localhost:5555/api"
 
-interface AuthContextType {
-  user: any
+type Role = "buyer" | "seller" | "admin"
+
+type AuthUser = {
+  id: number
+  email: string
+  username: string
+  role: Role
+}
+
+type AuthContextType = {
+  user: AuthUser | null
+  loading: boolean
+  isAuthenticated: boolean
+  login: (email: string, password: string) => Promise<{ success: boolean; user?: AuthUser; error?: string }>
   signup: (
     email: string,
     username: string,
     password: string,
-    role: "buyer" | "seller"
-  ) => Promise<{ success: boolean; error?: string }>
-  login: (
-    email: string,
-    password: string
-  ) => Promise<{ success: boolean; user?: any; error?: string }>
+    role: Exclude<Role, "admin">
+  ) => Promise<{ success: boolean; user?: AuthUser; error?: string }>
   logout: () => Promise<void>
+  refreshSession: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<any>(null)
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [loading, setLoading] = useState(true)
 
+  const refreshSession = async () => {
+    try {
+      const res = await fetch(`${API_URL}/check_session`, {
+        method: "GET",
+        credentials: "include",
+      })
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      if (!res.ok) {
+        setUser(null)
+        localStorage.removeItem("currentUser")
+        return
+      }
+
+      const data = (await res.json()) as AuthUser
+      setUser(data)
+      localStorage.setItem("currentUser", JSON.stringify(data))
+    } catch {
+      // optional fallback if backend is down
+      const stored = localStorage.getItem("currentUser")
+      setUser(stored ? JSON.parse(stored) : null)
     }
-  }, [])
-
-  const signup = async (
-    email: string,
-    username: string,
-    password: string,
-    role: "buyer" | "seller"
-  ) => {
-    const res = await fetch(`${API_URL}/users`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, username, password, role }),
-    })
-
-    if (!res.ok) {
-      return { success: false, error: "Signup failed" }
-    }
-
-    const data = await res.json()
-    setUser(data)
-    localStorage.setItem("currentUser", JSON.stringify(data))
-    return { success: true }
   }
 
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      await refreshSession()
+      setLoading(false)
+    })()
+  }, [])
+
   const login = async (email: string, password: string) => {
-    const res = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    })
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (!res.ok) {
-      return { success: false, error: "Invalid credentials" }
+      if (!res.ok) {
+        const err = await safeJson(res)
+        return { success: false, error: err?.error ?? `Login failed (${res.status})` }
+      }
+
+      const data = (await res.json()) as AuthUser
+      setUser(data)
+      localStorage.setItem("currentUser", JSON.stringify(data))
+      return { success: true, user: data }
+    } catch (e) {
+      console.error("LOGIN FETCH ERROR:", e)
+      return { success: false, error: "Network error (backend down or CORS blocked)" }
     }
+  }
 
-    const data = await res.json()
-    setUser(data)
-    localStorage.setItem("currentUser", JSON.stringify(data))
+  const signup = async (email: string, username: string, password: string, role: Exclude<Role, "admin">) => {
+    try {
+      const res = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, username, password, role }),
+      })
 
-    return { success: true, user: data }
+      if (!res.ok) {
+        const err = await safeJson(res)
+        return { success: false, error: err?.error ?? `Signup failed (${res.status})` }
+      }
+
+      const createdUser = (await res.json()) as AuthUser
+
+      // IMPORTANT: your backend does NOT set session on signup by default.
+      // So we login immediately after successful signup:
+      const loginResult = await login(email, password)
+      if (!loginResult.success) {
+        // If login fails, still return created user but user isn't session-authenticated
+        return { success: true, user: createdUser }
+      }
+
+      return { success: true, user: loginResult.user }
+    } catch (e) {
+      console.error("SIGNUP FETCH ERROR:", e)
+      return { success: false, error: "Network error (backend down or CORS blocked)" }
+    }
   }
 
   const logout = async () => {
-    await fetch(`${API_URL}/logout`, {
-      method: "DELETE",
-      credentials: "include",
-    })
-    setUser(null)
-    localStorage.removeItem("currentUser")
+    try {
+      await fetch(`${API_URL}/logout`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+    } finally {
+      setUser(null)
+      localStorage.removeItem("currentUser")
+    }
   }
 
-  return (
-    <AuthContext.Provider value={{ user, signup, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      isAuthenticated: !!user,
+      login,
+      signup,
+      logout,
+      refreshSession,
+    }),
+    [user, loading]
   )
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+async function safeJson(res: Response) {
+  try {
+    return await res.json()
+  } catch {
+    return null
+  }
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider")
-  }
-  return context
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider")
+  return ctx
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// "use client"
-
-// import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-// import type { User, UserRole } from "@/lib/types"
-
-// interface AuthContextType {
-//   user: User | null
-//   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-//   signup: (
-//     email: string,
-//     username: string,
-//     password: string,
-//     role: UserRole,
-//   ) => Promise<{ success: boolean; error?: string }>
-//   logout: () => void
-//   isAuthenticated: boolean
-// }
-
-// const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-// export function AuthProvider({ children }: { children: ReactNode }) {
-//   const [user, setUser] = useState<User | null>(null)
-
-//   useEffect(() => {
-//     // Load user from localStorage on mount
-//     const storedUser = localStorage.getItem("currentUser")
-//     if (storedUser) {
-//       setUser(JSON.parse(storedUser))
-//     }
-
-//     // Initialize admin user if not exists
-//     const users = JSON.parse(localStorage.getItem("users") || "[]")
-//     const adminExists = users.some((u: User) => u.role === "admin")
-//     if (!adminExists) {
-//       const adminUser: User = {
-//         id: "admin-1",
-//         email: "admin@ecofind.com",
-//         username: "admin",
-//         role: "admin",
-//         createdAt: new Date().toISOString(),
-//       }
-//       users.push(adminUser)
-//       localStorage.setItem("users", JSON.stringify(users))
-//       // Store admin password separately
-//       const passwords = JSON.parse(localStorage.getItem("passwords") || "{}")
-//       passwords["admin@ecofind.com"] = "admin123"
-//       localStorage.setItem("passwords", JSON.stringify(passwords))
-//     }
-//   }, [])
-
-//   const login = async (email: string, password: string) => {
-//     const users = JSON.parse(localStorage.getItem("users") || "[]")
-//     const passwords = JSON.parse(localStorage.getItem("passwords") || "{}")
-
-//     const foundUser = users.find((u: User) => u.email === email)
-
-//     if (!foundUser) {
-//       return { success: false, error: "User not found" }
-//     }
-
-//     if (passwords[email] !== password) {
-//       return { success: false, error: "Incorrect password" }
-//     }
-
-//     setUser(foundUser)
-//     localStorage.setItem("currentUser", JSON.stringify(foundUser))
-//     return { success: true }
-//   }
-
-//   const signup = async (email: string, username: string, password: string, role: UserRole) => {
-//     // Admin cannot signup
-//     if (role === "admin") {
-//       return { success: false, error: "Admin accounts cannot be created through signup" }
-//     }
-
-//     const users = JSON.parse(localStorage.getItem("users") || "[]")
-//     const passwords = JSON.parse(localStorage.getItem("passwords") || "{}")
-
-//     // Check if email already exists
-//     if (users.some((u: User) => u.email === email)) {
-//       return { success: false, error: "Email already exists" }
-//     }
-
-//     const newUser: User = {
-//       id: `user-${Date.now()}`,
-//       email,
-//       username,
-//       role,
-//       createdAt: new Date().toISOString(),
-//     }
-
-//     users.push(newUser)
-//     passwords[email] = password
-
-//     localStorage.setItem("users", JSON.stringify(users))
-//     localStorage.setItem("passwords", JSON.stringify(passwords))
-
-//     setUser(newUser)
-//     localStorage.setItem("currentUser", JSON.stringify(newUser))
-//     return { success: true }
-//   }
-
-//   const logout = () => {
-//     setUser(null)
-//     localStorage.removeItem("currentUser")
-//   }
-
-//   return (
-//     <AuthContext.Provider value={{ user, login, signup, logout, isAuthenticated: !!user }}>
-//       {children}
-//     </AuthContext.Provider>
-//   )
-// }
-
-// export function useAuth() {
-//   const context = useContext(AuthContext)
-//   if (!context) {
-//     throw new Error("useAuth must be used within AuthProvider")
-//   }
-//   return context
-// }
