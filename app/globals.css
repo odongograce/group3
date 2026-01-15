@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    /* Updated to use Inter and Space Mono fonts */
+    --font-sans: var(--font-inter);
+    --font-mono: var(--font-space-mono);
+    /* Custom auction platform color palette - deep teal primary, warm amber accent */
+    --background: 0 0% 100%;
+    --foreground: 210 40% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 40% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 40% 8%;
+    --primary: 185 85% 25%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 185 20% 96%;
+    --secondary-foreground: 185 85% 25%;
+    --muted: 185 20% 96%;
+    --muted-foreground: 185 15% 45%;
+    --accent: 35 100% 50%;
+    --accent-foreground: 210 40% 8%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 185 20% 88%;
+    --input: 185 20% 88%;
+    --ring: 185 85% 25%;
+    --chart-1: 185 85% 45%;
+    --chart-2: 35 100% 50%;
+    --chart-3: 280 65% 60%;
+    --chart-4: 160 60% 45%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 210 40% 8%;
+    --foreground: 0 0% 98%;
+    --card: 210 35% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 210 35% 12%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 185 85% 35%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 30% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 210 30% 18%;
+    --muted-foreground: 185 20% 65%;
+    --accent: 35 100% 55%;
+    --accent-foreground: 210 40% 8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 30% 18%;
+    --input: 210 30% 18%;
+    --ring: 185 85% 35%;
+    --chart-1: 185 85% 45%;
+    --chart-2: 35 100% 50%;
+    --chart-3: 280 65% 60%;
+    --chart-4: 160 60% 45%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
