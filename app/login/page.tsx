@@ -52,7 +52,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">Welcome Back</h1>
-            <p className="text-sm text-muted-foreground">Login to your ecoFind account</p>
+            <p className="text-sm text-muted-foreground">Login to your ecoFinds account</p>
           </div>
         </div>
 
@@ -68,7 +68,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="youemail@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
