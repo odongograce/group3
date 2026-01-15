@@ -1,5 +1,3 @@
-```md
-
 # ecoFinds
 
 In this project, you'll be working with an online second-hand auction marketplace.
@@ -79,8 +77,8 @@ npm install
 
 You can run your react app on http://localhost:3000 by running:
 
-```sh
-npm start
+``sh 
+npm start 
 ``
 
 ## Folder Structure
